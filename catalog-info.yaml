@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: domain-services-template
+  title: domain-services-template
+  description: A copier template for making epics-containers domain services repositories
+spec:
+  type: documentation
+  lifecycle: experimental
+  owner: user:hgv27681
