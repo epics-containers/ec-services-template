@@ -54,7 +54,7 @@ ioc-instance:
   # a volume to mount for writing data to. This can be a PVC or a hostPath
   # the PVC
   dataVolume:
-    # Create a PVC called {{ .Chart.Name }}-data when true
+    # Create a PVC called {.Chart.Name}-data when true
     pvc: false
     # A path on the host machine to write data into. Also used as the path that the
     # pvc or hostPath will be mounted at so that users need not be confused about
@@ -77,9 +77,7 @@ ioc-instance:
       cpu: 100m
       memory: 64Mi
 
-  # extra tolerations for the training rigs
-  tolerations:
-    - key: nodetype
-      operator: "Equal"
-      value: training-rig
-      effect: "NoSchedule"
+  # extra tolerations as required
+  {% filter indent(width=2) %}
+  {{ tolerations }}
+  {% endfilter %}

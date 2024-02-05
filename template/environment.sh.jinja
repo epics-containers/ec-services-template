@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# a bash script to source in order to set up your command line to interact with
-# a specific beamline. This needs to be customized per beamline / domain
+# a bash script to source in order to set up your command line to in order
+# to work with the {{ grouping_name }} IOCs and Services.
 
 # check we are sourced
 if [ "$0" = "$BASH_SOURCE" ]; then
@@ -11,7 +11,7 @@ fi
 
 THIS_DIR=$(dirname ${0})
 
-echo "Loading IOC environment for {{ grouping_name }} ..."
+echo "Loading IOC and Services environment for {{ grouping_name }} ..."
 
 #### SECTION 1. Environment variables ##########################################
 
@@ -24,7 +24,7 @@ export EC_REGISTRY_MAPPING_REGEX='
 '
 # the namespace to use for kubernetes deployments - use local for local docker/podman
 export EC_K8S_NAMESPACE={{ cluster_namespace }}
-# the git repo for this beamline (or accelerator domain)
+# the git repo for this grouping of IOCs
 export EC_SERVICES_REPO={{ repo_uri }}
 # declare your centralised log server Web UI
 export EC_LOG_URL="{{ logging_url }}"
@@ -47,7 +47,7 @@ source <(ec --show-completion ${SHELL})
 
 
 #### SECTION 3. Configure Kubernetes Cluster ###################################
-{% if cluster_type.starts_with("dls_") %}
+{% if cluster_type.startswith("dls_") %}
 # the following configures kubernetes inside DLS.
 
 module unload pollux > /dev/null

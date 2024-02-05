@@ -77,6 +77,25 @@ cluster_type:
     Other: other
   default: dls_dedicated
 
+tolerations:
+  type: str
+  help: |
+    Add some tolerations to your services and IOCs.
+    Choose blank if you have none.
+  when: "{% if cluster_namespace != 'local' %}true{% endif %}"
+  default: |
+    {% if grouping_name in [ "bl46p","bl47p","bl48p","bl49p",]  -%}  tolerations:
+    - key: nodetype
+      operator: "Equal"
+      value: training-rig
+      effect: "NoSchedule"
+    {%- elif grouping_name in [ "bl45p",] -%}
+    - key: nodetype
+      operator: "Equal"
+      value: test-rig
+      effect: "NoSchedule"
+    {%- endif %}
+
 git_platform:
   type: str
   help: |

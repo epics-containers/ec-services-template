@@ -4,7 +4,7 @@ _src_path: gh:DiamondLightSource/python-copier-template
 author_email: giles.knap@diamond.ac.uk
 author_name: Giles Knap
 component_owner: user:hgv27681
-description: A copier template for making epics-containers domain services repositories
+description: A copier template for making epics-containers repositories for ioc and service instances
 distribution_name: domain-services-template
 docker: true
 docs_type: README
