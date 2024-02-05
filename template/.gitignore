@@ -6,6 +6,3 @@
 **/*.bob
 edm/bobs
 **/*copy
-
-# this file is placed in the folder for running CI tests
-ci_test/values.yaml

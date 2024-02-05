@@ -21,4 +21,4 @@ dependencies:
     repository: file://../../helm/configmap
   - name: domain
     version: "2.0.0+b1"
-    repository: file://../../helm/domain
+    repository: file://../../helm/shared
