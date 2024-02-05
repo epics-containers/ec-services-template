@@ -11,19 +11,23 @@ fi
 
 THIS_DIR=$(dirname ${0})
 
-echo "Loading IOC environment for bl47p ..."
+echo "Loading IOC environment for {{ grouping_name }} ..."
 
 #### SECTION 1. Environment variables ##########################################
 
-# a mapping between genenric IOC repo roots and the related container registry
-# use spaces to separate multiple mappings
-export EC_REGISTRY_MAPPING='github.com=ghcr.io'
+# a mapping between generic IOC repo roots and the related container registry
+# use spaces or line breaks to separate multiple mappings by default this
+# inlcudes mappings for github and DLS gitlab, add your own here.
+export EC_REGISTRY_MAPPING_REGEX='
+.*github.com:(.*)\/(.*) ghcr.io/\1/\2
+.*gitlab.diamond.ac.uk.*\/(.*) gcr.io/diamond-privreg/controls/prod/ioc/\1
+'
 # the namespace to use for kubernetes deployments - use local for local docker/podman
-export EC_K8S_NAMESPACE=p47-iocs
+export EC_K8S_NAMESPACE={{ cluster_namespace }}
 # the git repo for this beamline (or accelerator domain)
-export EC_DOMAIN_REPO=git@github.com:epics-containers/bl47p.git
+export EC_SERVICES_REPO={{ repo_uri }}
 # declare your centralised log server Web UI
-export EC_LOG_URL='https://graylog2.diamond.ac.uk/search?rangetype=relative&fields=message%2Csource&width=1489&highlightMessage=&relative=172800&q=pod_name%3A{ioc_name}*'
+export EC_LOG_URL="{{ logging_url }}"
 # enforce a specific container cli - defaults to whatever is available
 # export EC_CONTAINER_CLI=podman
 # enable debug output in all 'ec' commands
@@ -43,19 +47,18 @@ source <(ec --show-completion ${SHELL})
 
 
 #### SECTION 3. Configure Kubernetes Cluster ###################################
-# example of how we set up a cluster at DLS is below
-# SET UP Connection to KUBERNETES CLUSTER and set default namespace.
-if module --version &> /dev/null; then
-    if module avail pollux > /dev/null; then
-        module unload pollux > /dev/null
-        module load pollux > /dev/null
-        # set the default namespace for kubectl and helm (for convenience only)
-        kubectl config set-context --current --namespace=p47-iocs
-        # get running iocs: makes sure the user has provided credentials
-        ec ps
-    fi
-fi
+{% if cluster_type.starts_with("dls_") %}
+# the following configures kubernetes inside DLS.
 
+module unload pollux > /dev/null
+module load pollux > /dev/null
+# set the default namespace for kubectl and helm (for convenience only)
+kubectl config set-context --current --namespace=p47-iocs
+# make sure the user has provided credentials
+kubectl version --short
+{% else %}
+# TODO add commands here to enable kubectl to conntect to the cluster
+{% endif %}
 
 # enable shell completion for k8s tools
 source <(helm completion $(basename ${SHELL}))

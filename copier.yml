@@ -5,33 +5,84 @@ _tasks:
   - "git init --initial-branch=main"
   - "git remote add origin {{repo_uri}}"
 
-group_type:
+grouping_type:
   type: str
   help: |
-    What type of group of IOCs are you creating?
-    A group is a collection of IOCs and services, typically deployed to a single namespace in a single cluster or a set of servers in a single subnet.
-    Typically a group will be a beamline or an arbitrary group of IOCs for the accelerator, e.g. grouped by technical area, or by location or by maintainer.
+    Where are you deploying your IOCs and services?
+
+    The repository this template will make represents a grouping of IOCs and
+    services, typically deployed to a single namespace in a single cluster.
+
+    The grouping may be arbitrary, e.g. grouped by technical area, or by
+    location or by maintainer, as long as all IOCs in the grouping run on the
+    same cluster.
+
+    At Diamond, the grouping is typically by beamline for beamline IOCs and by
+    technical area for accelerator IOCs.
   choices:
     beamline: beamline
-    accelerator group: accelerator
+    accelerator: accelerator group
+    lab: lab
     other: group
-
-group_name:
-  type: str
-  help: Name of the group, e.g. "bl47p" for beamline P47 or "VA" for vacuum IOCs
-  validator: >-
-    {% if not (group_name | regex_search('^[a-zA-Z][a-zA-Z-0-9]+$')) %}
-    {{group_name}} must be alphanumeric and start with a letter, and may contain hyphens
-    {% endif %}
 
 description:
   type: str
-  help: A short description of your group
+  help: A short description of your group of IOCs and services
   placeholder: One line description of your module
+
+grouping_name:
+  type: str
+  help: |
+    Name of the {{grouping_type}}{{', e.g "bl47p", "bl20j", "bl21i"' if
+    grouping_type == "beamline" else ', e.g. "VA" for vacuum IOCs' if "accel"
+    in grouping_type else ''}}
+  validator: >-
+    {% if not (grouping_name | regex_search('^[a-zA-Z][a-zA-Z-0-9]+$')) %}
+    {{grouping_name}} must be alphanumeric and start with a letter,
+    it may contain hyphens
+    {% endif %}
+
+cluster_namespace:
+  type: str
+  help: |
+    Name of the namespace where the IOCs and services in this repository will run.
+
+    Use local for deploying to the local docker or podman instance.
+  placeholder: p38-iocs, j20-iocs, p47-iocs, etc.
+  default: local
+  validator: >-
+    {% if not (cluster_namespace | regex_search('^[a-z][a-z-0-9]+$')) %}
+    {{cluster_namespace}} must be lower case alphanumeric and start with a letter,
+    it may contain hyphens
+    {% endif %}
+
+cluster_name:
+  type: str
+  help: Name of the cluster where the IOCs and services in this repository will run
+  placeholder: k8s-p38, k8s-i20-1, pollux, etc.
+  when: "{% if cluster_namespace != 'local' %}true{% endif %}"
+  validator: >-
+    {% if not (cluster_name | regex_search('^[a-z][a-z-0-9]+$')) %}
+    {{cluster_name}} must be lower case alphanumeric and start with a letter,
+    it may contain hyphens
+    {% endif %}
+
+cluster_type:
+  type: str
+  help: This setting controls how the `environment.sh` script connects to the cluster. To
+  when: "{% if cluster_namespace != 'local' %}true{% endif %}"
+  choices:
+    DLS Dedicated Cluster (beamline or accelerator): dls_dedicated
+    DLS Shared Cluster (pollux or argus): dls_shared
+    Other: other
+  default: dls_dedicated
 
 git_platform:
   type: str
-  help: Git platform hosting the repository. (override in the next question if your choice is missing - or add your own in a PR)
+  help: |
+    Git platform hosting the repository.
+
+    Override the repo URI below if your choice is missing - or add your own in a PR.
   choices:
     - github.com
     - gitlab.diamond.ac.uk
@@ -51,7 +102,16 @@ repo_uri:
     Remote URI of the repository.
   default: >-
     {% if git_platform == 'gitlab.diamond.ac.uk/' -%}
-    git@{{git_platform}}:controls/containers/{{group_type}}/{{group_name}}.git
+    git@{{git_platform}}:controls/containers/{{grouping_type}}/{{grouping_name}}.git
     {%- else -%}
-    git@{{git_platform}}:{{github_org}}/{{group_name}}.git
+    git@{{git_platform}}:{{github_org}}/{{grouping_name}}.git
     {%- endif %}
+
+logging_url:
+  type: str
+  when: "{% if cluster_namespace != 'local' %}true{% endif %}"
+  help:
+    URL for centralized logging. This should be a url to a centralised logging service. The string {service_name} will be replaced with the name of the service.
+    The default is the graylog service at Diamond.
+    Leave blank if you don't have a centralised logging service.
+  default: https://graylog2.diamond.ac.uk/search?rangetype=relative&fields=message%2Csource&width=1489&highlightMessage=&relative=172800&q=pod_name%3A{service_name}*
