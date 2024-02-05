@@ -1,0 +1,57 @@
+# Project Details
+_subdirectory: "template"
+
+_tasks:
+  - "git init --initial-branch=main"
+  - "git remote add origin {{repo_uri}}"
+
+group_type:
+  type: str
+  help: |
+    What type of group of IOCs are you creating?
+    A group is a collection of IOCs and services, typically deployed to a single namespace in a single cluster or a set of servers in a single subnet.
+    Typically a group will be a beamline or an arbitrary group of IOCs for the accelerator, e.g. grouped by technical area, or by location or by maintainer.
+  choices:
+    beamline: beamline
+    accelerator group: accelerator
+    other: group
+
+group_name:
+  type: str
+  help: Name of the group, e.g. "bl47p" for beamline P47 or "VA" for vacuum IOCs
+  validator: >-
+    {% if not (group_name | regex_search('^[a-zA-Z][a-zA-Z-0-9]+$')) %}
+    {{group_name}} must be alphanumeric and start with a letter, and may contain hyphens
+    {% endif %}
+
+description:
+  type: str
+  help: A short description of your group
+  placeholder: One line description of your module
+
+git_platform:
+  type: str
+  help: Git platform hosting the repository. (override in the next question if your choice is missing - or add your own in a PR)
+  choices:
+    - github.com
+    - gitlab.diamond.ac.uk
+
+github_org:
+  type: str
+  help: |
+    GitHub organisation that will contain this repo.
+    Set to your GitHub username to make a personal repo, or epics-containers
+    if you have permissions to make it there.
+  when: "{{ git_platform == 'github.com' }}"
+  default: epics-containers
+
+repo_uri:
+  type: str
+  help: |
+    Remote URI of the repository.
+  default: >-
+    {% if git_platform == 'gitlab.diamond.ac.uk/' -%}
+    git@{{git_platform}}:controls/containers/{{group_type}}/{{group_name}}.git
+    {%- else -%}
+    git@{{git_platform}}:{{github_org}}/{{group_name}}.git
+    {%- endif %}
