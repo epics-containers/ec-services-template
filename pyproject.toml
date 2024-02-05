@@ -4,23 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "domain-services-template"
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-]
-description = "A copier template for making epics-containers domain services repositories"
-dependencies = [
-    "typing-extensions;python_version<'3.8'",
-] # Add project dependencies here, e.g. ["click", "numpy"]
 dynamic = ["version"]
-license.file = "LICENSE"
-readme = "README.rst"
-requires-python = ">=3.7"
+
+# This is a minimal toml file to allow us to do pip install
+dependencies = [
+    "copier",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -32,46 +21,17 @@ dev = [
     "pytest",
     "pytest-cov",
     "ruff",
-    "sphinx-autobuild",
-    "sphinx-copybutton",
-    "sphinx-design",
     "tox-direct",
     "types-mock",
 ]
-
-[project.scripts]
-domain-services-template = "domain_services_template.__main__:main"
-
-[project.urls]
-GitHub = "https://github.com/epics-containers/domain-services-template"
-
-[[project.authors]] # Further authors may be added by duplicating this section
-email = "giles.knap@diamond.ac.uk"
-name = "Giles Knap"
-
-
-[tool.setuptools_scm]
-write_to = "src/domain_services_template/_version.py"
-
-[tool.mypy]
-ignore_missing_imports = true # Ignore missing stubs in imported modules
 
 [tool.pytest.ini_options]
 # Run pytest with all our checkers, and don't spam us with massive tracebacks on error
 addopts = """
     --tb=native -vv --doctest-modules --doctest-glob="*.rst"
     """
-# https://iscinumpy.gitlab.io/post/bound-version-constraints/#watch-for-warnings
-filterwarnings = "error"
 # Doctest python code in docs, python code in src docstrings, test functions in tests
-testpaths = "docs src tests"
-
-[tool.coverage.run]
-data_file = "/tmp/domain_services_template.coverage"
-
-[tool.coverage.paths]
-# Tests are run from installed location, map back to the src directory
-source = ["src", "**/site-packages/"]
+testpaths = "tests"
 
 # tox must currently be configured via an embedded ini string
 # See: https://github.com/tox-dev/tox/issues/999
@@ -80,28 +40,22 @@ legacy_tox_ini = """
 [tox]
 skipsdist=True
 
-[testenv:{pre-commit,mypy,pytest,docs}]
+[testenv:{pre-commit,pytest}]
 # Don't create a virtualenv for the command, requires tox-direct plugin
 direct = True
 passenv = *
 allowlist_externals =
-    pytest
     pre-commit
-    mypy
-    sphinx-build
-    sphinx-autobuild
+    pytest
 commands =
-    pytest: pytest --cov=domain_services_template --cov-report term --cov-report xml:cov.xml {posargs}
-    mypy: mypy src tests {posargs}
-    pre-commit: pre-commit run --all-files {posargs}
-    docs: sphinx-{posargs:build -EW --keep-going} -T docs build/html
+    pre-commit: pre-commit run --all-files --show-diff-on-failure {posargs}
+    pytest: pytest {posargs}
 """
-
 
 [tool.ruff]
 src = ["src", "tests"]
 line-length = 88
-select = [
+lint.select = [
     "C4",   # flake8-comprehensions - https://beta.ruff.rs/docs/rules/#flake8-comprehensions-c4
     "E",    # pycodestyle errors - https://beta.ruff.rs/docs/rules/#error-e
     "F",    # pyflakes rules - https://beta.ruff.rs/docs/rules/#pyflakes-f
