@@ -2,53 +2,72 @@
 _subdirectory: "template"
 
 _tasks:
-  - "git init --initial-branch=main"
-  - "git remote add origin {{repo_uri}}"
+  - git init --initial-branch=main
+  - git remote add origin {{repo_uri}}
 
 grouping_type:
   type: str
-  help: |
-    Where are you deploying your IOCs and services?
-
-    The repository this template will make represents a grouping of IOCs and
-    services, typically deployed to a single namespace in a single cluster.
-
-    The grouping may be arbitrary, e.g. grouped by technical area, or by
-    location or by maintainer, as long as all IOCs in the grouping run on the
-    same cluster.
-
-    At Diamond, the grouping is typically by beamline for beamline IOCs and by
-    technical area for accelerator IOCs.
+  help: Where are you deploying these IOCs and services?
   choices:
-    beamline: beamline
-    accelerator: accelerator group
-    lab: lab
-    other: group
+    beamline:
+    accelerator:
+    lab:
+    other:
+  default: beamline
+
+beamline:
+  type: str
+  help: |
+    Short name for the beamline, e.g. "bl47p", "bl20j", "bl21i"
+  validator: >-
+    {% if not (beamline | regex_search('^[a-z][a-z-0-9]+$')) %}
+    {{beamline}} must be alphanumeric and start with a letter,
+    it may contain hyphens
+    {% endif %}
+  when: "{% if grouping_type == 'beamline' %}true{% endif %}"
+  default: bl01t
+
+ioc_group:
+  type: str
+  help: |
+    Short name for the collection of IOCs in this repo.
+  placeholder: e.g. "VA", "PS"
+  validator: >-
+    {% if not (ioc_group | regex_search('^[a-zA-Z][a-zA-Z-0-9]+$')) %}
+    {{ioc_group}} must be alphanumeric plus hyphens and start with a letter.
+    {% endif %}
+  when: "{% if grouping_type != 'beamline' -%}true{%- endif %}"
+
+location:
+  type: str
+  help: |
+
+    Default location where these IOCs and services will run.
+    Leave blank to configure per IOC.
+  placeholder: e.g. "SR01"
+  validator: >-
+    {% if not (ioc_group | regex_search('^[a-zA-Z][a-zA-Z-0-9]+$')) %}
+    {{ioc_group}} must be alphanumeric and start with a letter, it may contain hyphens
+    {% endif %}
+  when: "{% if grouping_type != 'beamline' %}true{% endif %}"
 
 description:
   type: str
-  help: A short description of your group of IOCs and services
-  placeholder: One line description of your module
-
-grouping_name:
-  type: str
-  help: |
-    Name of the {{grouping_type}}{{', e.g "bl47p", "bl20j", "bl21i"' if
-    grouping_type == "beamline" else ', e.g. "VA" for vacuum IOCs' if "accel"
-    in grouping_type else ''}}
-  validator: >-
-    {% if not (grouping_name | regex_search('^[a-zA-Z][a-zA-Z-0-9]+$')) %}
-    {{grouping_name}} must be alphanumeric and start with a letter,
-    it may contain hyphens
-    {% endif %}
+  help: One line description of the module
+  default: |
+    {% if grouping_type == 'beamline' -%}
+    EPICS IOCs and Services for the {{ beamline }} beamline
+    {%- else -%}
+    {{ grouping_name }} {{ ioc_group }} EPICS IOCs and Services
+    {%- endif %}
 
 cluster_namespace:
   type: str
   help: |
-    Name of the namespace where the IOCs and services in this repository will run.
 
+    Name of the namespace where the IOCs and services in this repository will run.
     Use local for deploying to the local docker or podman instance.
-  placeholder: p38-iocs, j20-iocs, p47-iocs, etc.
+    e.g. p38-iocs, j20-iocs, p47-iocs, etc.
   default: local
   validator: >-
     {% if not (cluster_namespace | regex_search('^[a-z][a-z-0-9]+$')) %}
@@ -65,43 +84,36 @@ cluster_name:
     {% if not (cluster_name | regex_search('^[a-z][a-z-0-9]+$')) %}
     {{cluster_name}} must be lower case alphanumeric and start with a letter,
     it may contain hyphens
-    {% endif %}
+    {% endif -%}
 
 cluster_type:
   type: str
   help: This setting controls how the `environment.sh` script connects to the cluster. To
   when: "{% if cluster_namespace != 'local' %}true{% endif %}"
   choices:
-    DLS Dedicated Cluster (beamline or accelerator): dls_dedicated
-    DLS Shared Cluster (pollux or argus): dls_shared
-    Other: other
+    DLS Dedicated Cluster: dls_dedicated
+    Shared Cluster (inc accelerator): dls_shared
+    Other Shared: shared
+    Other Dedicated: dedicated
   default: dls_dedicated
 
-tolerations:
+node_type:
   type: str
-  help: |
-    Add some tolerations to your services and IOCs.
-    Choose blank if you have none.
-  when: "{% if cluster_namespace != 'local' %}true{% endif %}"
-  default: |
-    {% if grouping_name in [ "bl46p","bl47p","bl48p","bl49p",]  -%}  tolerations:
-    - key: nodetype
-      operator: "Equal"
-      value: training-rig
-      effect: "NoSchedule"
-    {%- elif grouping_name in [ "bl45p",] -%}
-    - key: nodetype
-      operator: "Equal"
-      value: test-rig
-      effect: "NoSchedule"
-    {%- endif %}
+  help: Add node-type tolerations for the target hosts' node type
+  when: "{% if 'shared' in cluster_type %}true{% endif %}"
+  choices:
+    training-rig:
+    test-rig:
+    None: ""
+    other: TODO add your Node Type toleration here
+  default: ""
 
 git_platform:
   type: str
   help: |
-    Git platform hosting the repository.
 
-    Override the repo URI below if your choice is missing - or add your own in a PR.
+    Git platform hosting the repository.
+    Override the repo URI below if your choice is missing, or add your own in a PR.
   choices:
     - github.com
     - gitlab.diamond.ac.uk
