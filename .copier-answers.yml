@@ -5,10 +5,10 @@ author_email: giles.knap@diamond.ac.uk
 author_name: Giles Knap
 component_owner: user:hgv27681
 description: A copier template for making epics-containers repositories for ioc and service instances
-distribution_name: domain-services-template
+distribution_name: ioc-services-template
 docker: true
 docs_type: README
 git_platform: github.com
 github_org: epics-containers
-package_name: domain_services_template
-repo_name: domain-services-template
+package_name: ioc_services_template
+repo_name: ioc-services-template
