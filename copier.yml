@@ -24,7 +24,8 @@ beamline:
     {{beamline}} must be alphanumeric and start with a letter,
     it may contain hyphens
     {% endif %}
-  when: "{% if type == 'beamline' %}true{% endif %}"
+  when: >-
+    {% if type == 'beamline' %}true{% endif %}
   default: bl01t
 
 ioc_group:
@@ -36,7 +37,14 @@ ioc_group:
     {% if not (ioc_group | regex_search('^[a-zA-Z][a-zA-Z-0-9]+$')) %}
     {{ioc_group}} must be alphanumeric plus hyphens and start with a letter.
     {% endif %}
-  when: "{% if type != 'beamline' -%}true{%- endif %}"
+  when: >-
+    {% if type != 'beamline' -%}true{%- endif %}
+
+description:
+  type: str
+  help: One line description of the module
+  default: >-
+    {{- type }} {{ beamline or ioc_group }} IOC Instances and Services
 
 location:
   type: str
@@ -49,17 +57,8 @@ location:
     {% if not (ioc_group | regex_search('^[a-zA-Z][a-zA-Z-0-9]+$')) %}
     {{ioc_group}} must be alphanumeric and start with a letter, it may contain hyphens
     {% endif %}
-  when: "{% if type != 'beamline' %}true{% endif %}"
-
-description:
-  type: str
-  help: One line description of the module
-  default: |
-    {% if type == 'beamline' -%}
-    EPICS IOC Instances and Services for the {{ beamline }} beamline
-    {%- else -%}
-    {{ type }} {{ ioc_group }} IOC Instances and Services
-    {%- endif %}
+  when: >-
+    {% if type != 'beamline' %}true{% endif %}
 
 cluster_namespace:
   type: str
@@ -79,7 +78,8 @@ cluster_name:
   type: str
   help: Name of the cluster where the IOCs and services in this repository will run
   placeholder: k8s-p38, k8s-i20-1, pollux, etc.
-  when: "{% if cluster_namespace != 'local' %}true{% endif %}"
+  when: >-
+    {% if cluster_namespace != 'local' %}true{% endif %}
   validator: >-
     {% if not (cluster_name | regex_search('^[a-z][a-z-0-9]+$')) %}
     {{cluster_name}} must be lower case alphanumeric and start with a letter,
@@ -89,7 +89,8 @@ cluster_name:
 cluster_type:
   type: str
   help: This setting controls how the `environment.sh` script connects to the cluster. To
-  when: "{% if cluster_namespace != 'local' %}true{% endif %}"
+  when: >-
+    {% if cluster_namespace != 'local' %}true{% endif %}
   choices:
     DLS Dedicated Cluster: dls_dedicated
     Shared Cluster (inc accelerator): dls_shared
@@ -100,7 +101,8 @@ cluster_type:
 node_type:
   type: str
   help: Add node-type tolerations for the target hosts' node type
-  when: "{% if 'shared' in cluster_type %}true{% endif %}"
+  when: >-
+    {% if 'shared' in cluster_type %}true{% endif %}
   choices:
     training-rig:
     test-rig:
@@ -124,7 +126,8 @@ github_org:
     GitHub organisation that will contain this repo.
     Set to your GitHub username to make a personal repo, or epics-containers
     if you have permissions to make it there.
-  when: "{{ git_platform == 'github.com' }}"
+  when: >-
+    {{ git_platform == 'github.com' }}
   default: epics-containers
 
 repo_uri:
@@ -140,7 +143,8 @@ repo_uri:
 
 logging_url:
   type: str
-  when: "{% if cluster_namespace != 'local' %}true{% endif %}"
+  when: >-
+    {% if cluster_namespace != 'local' %}true{% endif %}
   help:
     URL for centralized logging. This should be a url to a centralised logging service. The string {service_name} will be replaced with the name of the service.
     The default is the graylog service at Diamond.
