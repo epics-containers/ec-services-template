@@ -3,7 +3,11 @@ repos:
     rev: v4.4.0
     hooks:
       - id: check-added-large-files
-      - id: check-yaml
+      # TODO can't get exclude to work - investigate
+      # - id: check-yaml
+      #   # exclude helm templates which are not valid yaml
+      #   exclude: |
+      #     templates/[^/].yaml
       - id: check-merge-conflict
 
   - repo: local

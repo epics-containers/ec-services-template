@@ -3,13 +3,17 @@ requires = ["setuptools>=64", "setuptools_scm[toml]>=6.2", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "domain-services-template"
+name = "ioc-services-template"
 dynamic = ["version"]
+readme = "README.md"
 
 # This is a minimal toml file to allow us to do pip install
 dependencies = [
     "copier",
 ]
+
+[tool.setuptools]
+include-package-data = false
 
 [project.optional-dependencies]
 dev = [
@@ -40,16 +44,18 @@ legacy_tox_ini = """
 [tox]
 skipsdist=True
 
-[testenv:{pre-commit,pytest}]
+[testenv:{pre-commit,pytest,mypy}]
 # Don't create a virtualenv for the command, requires tox-direct plugin
 direct = True
 passenv = *
 allowlist_externals =
     pre-commit
     pytest
+    mypy
 commands =
     pre-commit: pre-commit run --all-files --show-diff-on-failure {posargs}
     pytest: pytest {posargs}
+    mypy: mypy tests {posargs}
 """
 
 [tool.ruff]
