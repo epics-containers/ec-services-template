@@ -1,13 +1,18 @@
 # default values for all IOCs on bl47p beamline
 ioc-instance:
-  {% if grouping_type != 'beamline' %}
+{% if grouping_type != 'beamline' %}
+  # the location where the IOCs will run - same as beamline for beamlines
   location: {{ location }}
+  # the name of the repository in which the IOC is grouped
   ioc_group: {{ ioc_group }}
-  {% else %}
+{% else %}
+  # the beamline name - only set for beamlines
   beamline: {{ beamline }}
+  # the location where the IOCs will run - same as beamline for beamlines
   ioc_group: {{ beamline }}
+  # the name of the repository in which the IOC is grouped
   location: {{ beamline }}
-  {%- endif %}
+{%- endif %}
 
   # typically use the default service account in the namespace.
   # If you need to specify an alternative then uncomment below
@@ -37,10 +42,11 @@ ioc-instance:
       value: "example"
 
   # defaults for securityContext
-  # Usually override this in the individual IOC values.yaml - At DLS the IOCs that
-  # write to the shared data directory must use iXXdetector user/group IDs
-  # securityContext:
-  #   allowPrivilegeEscalation: false
+  # Usually override runAsXXX in the individual IOC values.yaml.
+  # At DLS the IOCs that write to the shared data directory must use
+  # iXXdetector user/group IDs
+    securityContext:
+      allowPrivilegeEscalation: false
   #   runAsUser: 37887
   #   runAsGroup: 37887
 
