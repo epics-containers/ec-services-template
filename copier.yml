@@ -3,7 +3,8 @@ _subdirectory: "template"
 
 _tasks:
   - git init --initial-branch=main
-  - git remote add origin {{repo_uri}}
+  # Add the remote if it doesn't exist
+  - if git remote | grep -v origin; then git remote add origin {{repo_uri}}; fi
 
 type:
   type: str

@@ -16,13 +16,13 @@ entities:
     command: dbLoadRecords("/epics/ioc/config/ioc.db")
 
   - type: epics.dbpf
-    pv: EXAMPLE:IBEK:A
+    pv: {{ beamline or ioc_group | upper}}:IBEK:A
     value: "2.54"
 
   - type: epics.dbpf
-    pv: EXAMPLE:IBEK:B
+    pv: {{ beamline or ioc_group | upper}}:IBEK:B
     value: "2.61"
 
   - type: epics.PostStartupCommand
     command: |
-      dbgf EXAMPLE:IBEK:SUM
+      dbgf {{ beamline or ioc_group | upper}}:IBEK:SUM
