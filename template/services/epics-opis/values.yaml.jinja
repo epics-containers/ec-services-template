@@ -6,4 +6,10 @@ epics-opis:
   useAffinity: true
 
   # extra toleration for the shared cluster training rigs
-{{ tolerations }}
+  {%- if node_type %}
+  tolerations:
+    - key: "nodetype"
+      operator: "Equal"
+      value: "{{ node_type }}"
+      effect: "NoSchedule"
+  {% endif %}

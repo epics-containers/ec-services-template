@@ -1,6 +1,8 @@
 # Project Details
 _subdirectory: "template"
 
+_preserve_symlinks: true
+
 _tasks:
   - git init --initial-branch=main
   # Add the remote if it doesn't exist

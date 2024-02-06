@@ -91,7 +91,7 @@ ioc-instance:
   # extra tolerations as required
   {%- if node_type %}
   tolerations:
-    - key: "node-type"
+    - key: "nodetype"
       operator: "Equal"
       value: "{{ node_type }}"
       effect: "NoSchedule"
