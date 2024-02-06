@@ -1,6 +1,6 @@
 # A Helm Chart for deploying an IOC instance
 apiVersion: v2
-name: ioc
+name: shared
 
 version: 2.0.0+b1
 
