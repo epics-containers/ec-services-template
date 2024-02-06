@@ -1,5 +1,5 @@
 epics-opis:
-  domain: {{ grouping_name }}
+  domain: {{ beamline or ioc_group }}
 
   # this is a shared cluster beamline so use affinity to make this run on the
   # the beamline node (p47 only has one node)
