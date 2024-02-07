@@ -7,7 +7,7 @@ filing a new one. If you have a great idea but it involves big changes, please
 file a ticket before making a pull request! We want to make sure you don't spend
 your time coding something that might not fit the scope of the project.
 
-.. _GitHub: https://github.com/epics-containers/ioc-services-template/issues
+.. _GitHub: https://github.com/epics-containers/ec-services-template/issues
 
 Issue or Discussion?
 --------------------
@@ -16,7 +16,7 @@ Github also offers discussions_ as a place to ask questions and share ideas. If
 your issue is open ended and it is not obvious when it can be "closed", please
 raise it as a discussion instead.
 
-.. _discussions: https://github.com/epics-containers/ioc-services-template/discussions
+.. _discussions: https://github.com/epics-containers/ec-services-template/discussions
 
 Code coverage
 -------------
@@ -32,4 +32,4 @@ The `Developer Guide`_ contains information on setting up a development
 environment, running the tests and what standards the code and documentation
 should follow.
 
-.. _Developer Guide: https://epics-containers.github.io/ioc-services-template/main/developer/how-to/contribute.html
+.. _Developer Guide: https://epics-containers.github.io/ec-services-template/main/developer/how-to/contribute.html
