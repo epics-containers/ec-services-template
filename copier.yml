@@ -1,10 +1,13 @@
 _message_before_copy: |
   This template will create a new repository for deploying IOCs and services to
   a Kubernetes cluster. Each repository represents a collection of IOCs and
-  services that are deployed to the same cluster and usually the same namespace.
-  The grouping of the IOCs and services an be arbitrary, but it is common to
-  group them by beamline or accelerator technical area. Location of the IOCs
-  servers is also a possible grouping.
+  services that are deployed to *the same cluster* and usually the same namespace.
+  The grouping of the IOCs and services can be arbitrary, e.g. by beamline,
+  location, technical area, maintainer etc.
+
+  DLS typically uses a repository per beamline, and per accelerator technical
+  area. The repository name is usually the same as the beamline or technical
+  area e.g. bl20j or VA.
 
   If you are not using Kubernetes or are experimenting with this framework, you
   can specify "local" for the cluster_namespace. This will deploy IOCs and
@@ -15,9 +18,9 @@ _subdirectory: "template"
 _preserve_symlinks: true
 
 _tasks:
-  - git init --initial-branch=main
+  - if git rev-parse --git-dir 2>/dev/null; then git init --initial-branch=main; fi
   # Add the remote if it doesn't exist
-  - if git remote | grep -v origin; then git remote add origin {{repo_uri}}; fi
+  - if ! git remote | grep origin; then git remote add origin {{repo_uri}}; fi
 
 type:
   type: str
