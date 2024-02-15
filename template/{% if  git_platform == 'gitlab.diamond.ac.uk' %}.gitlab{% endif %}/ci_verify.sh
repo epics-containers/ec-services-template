@@ -8,7 +8,7 @@
 # other future services that don't use ibek, we will need to add a standard
 # entrypoint for validating the config folder mounted at /config.
 
-ROOT=$(realpath $(dirname ${0}))
+ROOT=$(realpath $(dirname ${0})/..)
 ID="${CI_COMMIT_SHORT_SHA:-"local"}"
 POD="bl01c-ci-${ID}-$(date +%s)"
 set -xe
