@@ -143,7 +143,7 @@ repo_uri:
   type: str
   help: Remote URI of the repository.
   default: >-
-    {% if git_platform == 'gitlab.diamond.ac.uk/' -%}
+    {% if git_platform == 'gitlab.diamond.ac.uk' -%}
     git@{{git_platform}}:controls/containers/{{type}}/{{beamline or ioc_group}}.git
     {%- else -%}
     git@{{git_platform}}:{{github_org}}/{{beamline or ioc_group}}.git
