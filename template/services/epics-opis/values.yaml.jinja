@@ -1,5 +1,18 @@
 epics-opis:
-  domain: {{ beamline or ioc_group }}
+
+{% if type != 'beamline' %}
+  # the location where the IOCs will run - same as beamline for beamlines
+  location: {{ location }}
+  # the name of the repository in which the IOC is grouped
+  ioc_group: {{ ioc_group }}
+{% else %}
+  # the beamline name - only set for beamlines
+  beamline: {{ beamline }}
+  # the location where the IOCs will run - same as beamline for beamlines
+  ioc_group: {{ beamline }}
+  # the name of the repository in which the IOC is grouped
+  location: {{ beamline }}
+{%- endif %}
 
   # this is a shared cluster beamline so use affinity to make this run on the
   # the beamline node (p47 only has one node)

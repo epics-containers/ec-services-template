@@ -1,8 +1,8 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: ioc-services-template
-  title: ioc-services-template
+  name: ec-services-template
+  title: ec-services-template
   description: A copier template for making epics-containers repositories that define IOCs instances and services.
 spec:
   type: documentation

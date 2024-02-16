@@ -18,7 +18,8 @@ _subdirectory: "template"
 _preserve_symlinks: true
 
 _tasks:
-  - if git rev-parse --git-dir 2>/dev/null; then git init --initial-branch=main; fi
+  - cd {{ _copier_conf.dst_path }}
+  - git init --initial-branch=main
   # Add the remote if it doesn't exist
   - if ! git remote | grep origin; then git remote add origin {{repo_uri}}; fi
 
@@ -143,7 +144,7 @@ repo_uri:
   type: str
   help: Remote URI of the repository.
   default: >-
-    {% if git_platform == 'gitlab.diamond.ac.uk/' -%}
+    {% if git_platform == 'gitlab.diamond.ac.uk' -%}
     git@{{git_platform}}:controls/containers/{{type}}/{{beamline or ioc_group}}.git
     {%- else -%}
     git@{{git_platform}}:{{github_org}}/{{beamline or ioc_group}}.git
