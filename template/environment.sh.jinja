@@ -45,6 +45,10 @@ source <(ec --show-completion ${SHELL})
 
 
 #### SECTION 3. Configure Kubernetes Cluster ###################################
+
+{% if cluster_namespace == 'local' %}
+# no cofiguration in this section for local docker/podman deployments
+{% else %}
 {% if cluster_type.startswith("dls_") %}
 # the following configures kubernetes inside DLS.
 
@@ -62,4 +66,5 @@ kubectl version --short
 source <(helm completion $(basename ${SHELL}))
 source <(kubectl completion $(basename ${SHELL}))
 
+{% endif %}
 

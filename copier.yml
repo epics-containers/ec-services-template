@@ -75,8 +75,8 @@ location:
 
 cluster_namespace:
   type: str
-  help: Cluster namespace for these IOCs and services.
-  placeholder: local for no K8S or e.g. p38-iocs, j20-iocs, p47-iocs
+  help: Cluster namespace. local for no K8S or e.g. p38-iocs, j20-iocs, p47-iocs
+  default: local
   validator: >-
     {% if not (cluster_namespace | regex_search('^[a-z][a-z-0-9]+$')) %}
     {{cluster_namespace}} must be lower case alphanumeric and start with a letter,
