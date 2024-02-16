@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=https://github.com/epics-containers/ioc-template/releases/download/2024.1.1/ibek.ioc.schema.json
 
-ioc_name: "{{ ioc_yaml_file_name }}"
+ioc_name: "{% raw %}{{ __utils__.get_env('IOC_NAME') }}{% endraw %}"
 
 description: Very generic instance for testing generic IOCs
 
@@ -10,7 +10,7 @@ entities:
     value: "GMT0BST"
 
   - type: devIocStats.iocAdminSoft
-    IOC: "{{ ioc_name | upper }}"
+    IOC: "{% raw %}{{ ioc_name | upper }}{% endraw %}"
 
   - type: epics.StartupCommand
     command: dbLoadRecords("/epics/ioc/config/ioc.db")
