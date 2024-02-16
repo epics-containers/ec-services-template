@@ -18,7 +18,6 @@ _subdirectory: "template"
 _preserve_symlinks: true
 
 _tasks:
-  - cd {{ _copier_conf.dst_path }}
   - git init --initial-branch=main
   # Add the remote if it doesn't exist
   - if ! git remote | grep origin; then git remote add origin {{repo_uri}}; fi
