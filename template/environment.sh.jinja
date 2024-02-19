@@ -52,8 +52,8 @@ source <(ec --show-completion ${SHELL})
 {% if cluster_type.startswith("dls_") %}
 # the following configures kubernetes inside DLS.
 
-module unload pollux > /dev/null
-module load pollux > /dev/null
+module unload {{ cluster_name }} > /dev/null
+module load {{ cluster_name }} > /dev/null
 # set the default namespace for kubectl and helm (for convenience only)
 kubectl config set-context --current --namespace={{ cluster_namespace }}
 # make sure the user has provided credentials
@@ -63,8 +63,8 @@ kubectl version --short
 {% endif %}
 
 # enable shell completion for k8s tools
+if [ -n "$ZSH_VERSION" ]; then SHELL=zsh; fi
 source <(helm completion $(basename ${SHELL}))
 source <(kubectl completion $(basename ${SHELL}))
-
 {% endif %}
 
