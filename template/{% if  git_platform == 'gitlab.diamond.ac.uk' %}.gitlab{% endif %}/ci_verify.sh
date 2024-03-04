@@ -31,12 +31,11 @@ do
         echo "Validating ${service} with ${image}"
 
         # This will fail and exit if the ioc.yaml is invalid
-        config="$(cat ${service}/config/ioc.yaml | base64)"
+        tar cf - ${service}/config | \
         kubectl run ${POD} -iq --restart Never --image ${image} \
-                --command -- bash -c "set -xe && mkdir config \
-                && echo \"$config\" | base64 -d > config/ioc.yaml \
-                && cat config/ioc.yaml \
-                && ibek runtime generate config/ioc.yaml /epics/ibek-defs/*" \
+                --command -- bash -c "tar xf - \
+                && cat ${service}/config/ioc.yaml \
+                && ibek runtime generate ${service}/config/ioc.yaml /epics/ibek-defs/*" \
                 &>/dev/null || { echo Failed; status=1; }
         kubectl wait --for=condition=ready=False --timeout=30s pod/${POD}
         kubectl logs ${POD}
