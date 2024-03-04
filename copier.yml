@@ -17,7 +17,7 @@ _migrations:
   - version: v3.1.1b1
     after:
       # introduce the symlinked templates folder to every IOC in the repo
-      - "{{ _copier_conf.src_path }}/.migrate"
+      - "{{ _copier_conf.src_path }}/migrate.sh ${VERSION_CURRENT}"
 
 _subdirectory: "template"
 

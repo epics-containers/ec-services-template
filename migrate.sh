@@ -3,11 +3,10 @@
 # find all folders that have a config folder and add the
 # configmap template to them
 
-THIS=$(dirname $0)
-cd $THIS
+echo "Migrating $(pwd) to Template VERSION $1"
 
-for i in $(find . -name config -type d); do
+for i in $(find services -name config -type d); do
     ioc=$(realpath $i/../)
     echo "Adding configmap template to $ioc"
-    ln -srf include/iocs/templates $ioc/templates
+    ln -srfn include/iocs/templates $ioc/templates
 done
