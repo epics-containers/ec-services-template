@@ -1,4 +1,4 @@
-# default values for all IOCs on bl47p beamline
+# default values for all IOCs on {{ ioc_group or beamline }}
 ioc-instance:
 {% if type != 'beamline' %}
   # the location where the IOCs will run - same as beamline for beamlines
