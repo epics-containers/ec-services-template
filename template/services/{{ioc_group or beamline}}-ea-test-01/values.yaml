@@ -2,3 +2,6 @@
 shared:
   ioc-instance:
     image: ghcr.io/epics-containers/ioc-adsimdetector-runtime:2024.4.1
+    # image: ghcr.io/epics-containers/ioc-adsimdetector-developer:2024.4.1  # Use a developer container
+    # startCommand: sleep  # Override default entry point
+    # startArgs: infinity  # Override default entry point
